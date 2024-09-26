@@ -1,6 +1,6 @@
 # gpx-simplify
 
-Given GPX file of 100km ultra simplify it to reduce number of points while keeping directions accurate:
+Given 100km GPX file simplify it to reduce number of points while keeping directions accurate:
 
 - Douglas–Peucker algorithm on raw GPX with 5m limit (5m being average GPS accuracy)
 - OSRM matching service to match each pair of coordinates to the closest point on OSM map
