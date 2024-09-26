@@ -42,7 +42,7 @@ def query_osrm_nearest(df):
 
   return pd.concat(results).reset_index(drop=True)
 
-def query_overpass_api(nodes, lat, lon):
+def get_way_count(nodes):
     node_1, node_2 = nodes
     overpass_query = f"""
         [out:json];
@@ -57,74 +57,46 @@ def query_overpass_api(nodes, lat, lon):
     )
     data = response.json()
 
-    way_count = data['elements'][0]['tags']['ways']
+    way_count = int(data['elements'][0]['tags']['ways'])
 
-    info = [(
-        lat,
-        lon,
-        nodes,
-        way_count,
-    )]
+    return way_count
 
-    df = pd.DataFrame(info, columns=[
-        'lat',
-        'lon',
-        'nodes',
-        'way_count',
-    ])
+def get_route(df):
+    route = []
+    last_idx = -1
 
-    return df
-
-def filter_with_ways(df):
-  results = []
-  
-  idx, inner_idx = None, None
-  
-  for idx, row in df.iterrows():
-    if inner_idx != None:
-        if idx < inner_idx:
+    for idx, row in df.iterrows():
+        if idx == 0:
+            route.append((row['lat'], row['lon']))
             continue
-      
-    overpass_df = query_overpass_api(row['nodes'], row['lat'], row['lon'])
-    if overpass_df.loc[0, 'way_count'] == 1:
-        for inner_idx in range(idx, len(df)):
+        elif idx == len(df) - 1:
+            route.append((row['lat'], row['lon']))
+            continue
+        
+        if idx <= last_idx:
+            continue
+        
+        # Query API for the current row
+        way_count = get_way_count(row['nodes'])
+        if way_count > 1:
+            route.append((row['lat'], row['lon']))
+            continue
+
+        # Check subsequent rows
+        for inner_idx in range(idx + 1, len(df)):
             inner_row = df.loc[inner_idx]
-            result_df = query_overpass_api(
-                [
-                    row['nodes'][0],
-                    inner_row['nodes'][0],
-                ], 
-                inner_row['lat'], 
-                inner_row['lon'],
-            )
-            if result_df.loc[0, 'way_count'] > 1:
-                info = [
-                    (
-                        row['lat'], 
-                        row['lon'],
-                        row['nodes'],
-                        overpass_df.loc[0, 'way_count'],
-                    ),
-                    (
-                        result_df.loc[0, 'lat'], 
-                        result_df.loc[0, 'lon'], 
-                        result_df.loc[0, 'nodes'], 
-                        result_df.loc[0, 'way_count'],
-                    ),
-                ]
+            
+            # Query API with start node from current row and end node from inner row
+            way_count = get_way_count([row['nodes'][0], inner_row['nodes'][1]])
+            
+            if way_count > 1:
+                route.append((row['lat'], row['lon']))
+                route.append((inner_row['lat'], inner_row['lon']))
                 
-                overpass_df = pd.DataFrame(info, columns=[
-                    'lat',
-                    'lon',
-                    'nodes',
-                    'way_count',
-                ])             
-        
-                results.append(overpass_df)
-    else:
-        results.append(overpass_df)
-        
-  return pd.concat(results).reset_index(drop=True)
+                last_idx = inner_idx  # Skip to next iteration after finding a match
+                break  # Move to next main iteration after finding a match
+
+    return route
 
 def process(filename, gpx_data):
     original_gpx = gpxpy.parse(gpx_data)
@@ -132,9 +104,8 @@ def process(filename, gpx_data):
     
     df = get_gpx_df(original_gpx)
     osrm_df = query_osrm_nearest(df)
-    ways_df = filter_with_ways(osrm_df)
+    route = get_route(osrm_df)
     
-    route = list(zip(ways_df['lat'], ways_df['lon']))
     edited_gpx = create_gpx(route)       
     edited_gpx = gpxpy.parse(edited_gpx)
     

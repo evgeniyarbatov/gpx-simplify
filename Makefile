@@ -8,7 +8,7 @@ LOG_DIR := log
 FILES := $(wildcard $(SRC_DIR)/*.gpx)
 TARGETS := $(FILES:$(SRC_DIR)/%=$(DEST_DIR)/%)
 
-all: venv install jupyter docker $(TARGETS)
+all: venv install jupyter $(TARGETS)
 
 venv:
 	@python3 -m venv $(VENV_PATH)
@@ -31,7 +31,6 @@ osm:
 
 docker:
 	@cd docker && make
-	@sleep 20
 
 $(DEST_DIR)/%.gpx: $(SRC_DIR)/%.gpx force
 	source $(VENV_PATH)/bin/activate && \
