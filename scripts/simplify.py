@@ -8,7 +8,7 @@ def process(filename, gpx_data):
     edited_gpx = gpxpy.parse(gpx_data)
     
     edited_gpx.simplify(max_distance=5.0)
-    log(filename, original_gpx, edited_gpx, 'initial-douglas–peucker')
+    log(filename, original_gpx, edited_gpx, 'douglas–peucker')
     
     return edited_gpx.to_xml()
 

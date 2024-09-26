@@ -8,7 +8,7 @@ LOG_DIR := log
 FILES := $(wildcard $(SRC_DIR)/*.gpx)
 TARGETS := $(FILES:$(SRC_DIR)/%=$(DEST_DIR)/%)
 
-all: venv install jupyter $(TARGETS)
+all: venv install jupyter osrm $(TARGETS)
 
 venv:
 	@python3 -m venv $(VENV_PATH)
@@ -25,14 +25,22 @@ jupyter: install
 	--display-name "$(PROJECT_NAME)" \
 	> /dev/null 2>&1
 
-$(DEST_DIR)/%.gpx: $(SRC_DIR)/%.gpx
+osrm:
+	@cd osrm && make
+	@sleep 20
+
+$(DEST_DIR)/%.gpx: $(SRC_DIR)/%.gpx force
 	@source $(VENV_PATH)/bin/activate && \
 	cat $< | \
 	python3 scripts/simplify.py $@ | \
+	python3 scripts/match.py $@ | \
+	python3 scripts/simplify.py $@ | \
 	python3 scripts/format-xml.py > $@; \
+
+force:
 
 clean:
 	rm -f $(DEST_DIR)/*
 	rm -rf $(LOG_DIR)/*
 
-.PHONY: venv install jupyter
+.PHONY: venv install jupyter osrm force

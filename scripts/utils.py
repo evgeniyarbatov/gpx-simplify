@@ -21,11 +21,13 @@ logging.basicConfig(
 )
  
 def parse_gpx(filepath):
-	data = []  
-
 	with open(filepath, 'r') as gpx_file:
 		gpx = gpxpy.parse(gpx_file)
-    
+
+	return get_gpx_df(gpx)
+
+def get_gpx_df(gpx):
+	data = []  
 	for track in gpx.tracks:
 		for segment in track.segments:
 			for point in segment.points:
@@ -35,7 +37,7 @@ def parse_gpx(filepath):
 					'longitude': lng,
 				})
 
-	return pd.DataFrame(data)
+	return pd.DataFrame(data)    
 
 def get_gpx_coordinates(gpx):
     coordinates = []
