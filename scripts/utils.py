@@ -9,6 +9,9 @@ from scipy.spatial.distance import euclidean
 
 from geopy.distance import geodesic
 
+import xml.dom.minidom
+from xml.etree.ElementTree import Element, SubElement, tostring
+
 LOG_DIR = 'log'
 os.makedirs(LOG_DIR, exist_ok=True)
 
@@ -100,3 +103,23 @@ def log(
         dtw_distance,
         step,
     )
+    
+def create_gpx(route):
+    gpx = Element('gpx', {
+        'creator': 'Evgeny Arbatov',
+        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+        'xsi:schemaLocation': 'http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd',
+        'version': '1.1',
+        'xmlns': 'http://www.topografix.com/GPX/1/1'
+    })
+    trk = SubElement(gpx, "trk")
+    trkseg = SubElement(trk, "trkseg")
+
+    for lat, lng in route:
+        SubElement(trkseg, "trkpt", attrib={"lat": str(lat), "lon": str(lng)})
+
+    gpx = xml.dom.minidom.parseString(
+        tostring(gpx, encoding="unicode")
+    ).toprettyxml() 
+        
+    return gpx

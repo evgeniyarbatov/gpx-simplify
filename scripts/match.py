@@ -5,12 +5,10 @@ import requests
 import itertools
 import polyline
 
-import xml.dom.minidom
-from xml.etree.ElementTree import Element, SubElement, tostring
-
 from utils import (
     log,
     get_gpx_df,
+    create_gpx,
 )
 
 DEFAULT_RADIUS_IN_METERS = 10
@@ -39,26 +37,6 @@ def get_match(points):
     ]
 
     return list(itertools.chain.from_iterable(route))
-
-def create_gpx(route):
-    gpx = Element('gpx', {
-        'creator': 'Evgeny Arbatov',
-        'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-        'xsi:schemaLocation': 'http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd',
-        'version': '1.1',
-        'xmlns': 'http://www.topografix.com/GPX/1/1'
-    })
-    trk = SubElement(gpx, "trk")
-    trkseg = SubElement(trk, "trkseg")
-
-    for lat, lng in route:
-        SubElement(trkseg, "trkpt", attrib={"lat": str(lat), "lon": str(lng)})
-
-    gpx = xml.dom.minidom.parseString(
-        tostring(gpx, encoding="unicode")
-    ).toprettyxml() 
-        
-    return gpx
 
 def process(filename, gpx_data):
     original_gpx = gpxpy.parse(gpx_data)
