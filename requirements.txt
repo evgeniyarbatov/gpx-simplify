@@ -1,0 +1,9 @@
+pandas
+ipykernel
+gpxpy
+lxml
+geopy
+matplotlib
+contextily
+fastdtw
+scipy

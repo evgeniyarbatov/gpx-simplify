@@ -11,3 +11,11 @@ Given 100km GPX file simplify it to reduce number of points while keeping direct
 - Stop querying Overpass API when there is more than 1 way between a pair of node IDs
 
 The result is a GPX file with points which contain only a single OSM ID through them.
+
+## Run
+
+Add original GPX to `original-gpx` dir.
+
+Run `make` to simplify.
+
+Simplified GPX in `simplified-gpx` dir.
