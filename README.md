@@ -2,7 +2,7 @@
 
 Given GPX file of 100km ultra simplify it to reduce number of points while keeping directions accurate.
 
-The idea is to use this approach:
+Idea:
 
 - Douglas–Peucker algorithm on raw GPX with 5m limit (5m being average GPS accuracy)
 - OSRM matching service to match each pair of coordinates to the closest point on OSM map
