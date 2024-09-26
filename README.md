@@ -9,7 +9,7 @@ Given 100km GPX file simplify it to reduce number of points while keeping direct
   - Iterate on Overpass API query by increasing distance between node IDs
   - Stop when there is more than 1 way between a pair of node IDs
 
-The result is a GPX file with points which contain several OSM ways through them ie points we really need for navigation.
+The result is a GPX file with points which contain several OSM ways through them, i.e. points we really need for navigation.
 
 ## Run
 
