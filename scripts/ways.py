@@ -103,6 +103,7 @@ def process(filename, gpx_data):
     edited_gpx = gpxpy.parse(gpx_data)
     
     df = get_gpx_df(original_gpx)
+    
     osrm_df = query_osrm_nearest(df)
     route = get_route(osrm_df)
     
