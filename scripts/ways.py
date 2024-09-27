@@ -98,7 +98,7 @@ def get_route(df):
 
     return route
 
-def process(filename, gpx_data):
+def process(gpx_data):
     original_gpx = gpxpy.parse(gpx_data)
     edited_gpx = gpxpy.parse(gpx_data)
     
@@ -110,17 +110,15 @@ def process(filename, gpx_data):
     edited_gpx = create_gpx(route)       
     edited_gpx = gpxpy.parse(edited_gpx)
     
-    log(filename, original_gpx, edited_gpx, 'overpass-api')
+    log(original_gpx, edited_gpx, 'overpass-api')
     
     return edited_gpx.to_xml()
 
-def main(args):
-    filename = args[0]
-    
+def main(): 
     gpx_data = sys.stdin.read()
     print(
-       process(filename, gpx_data) 
+       process(gpx_data) 
     )
     
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

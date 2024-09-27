@@ -82,7 +82,6 @@ def get_stats(gpx):
     return count, round(distance, 2) 
 
 def log(
-    filename,
     original_gpx, 
     edited_gpx, 
     step,
@@ -94,8 +93,7 @@ def log(
     dtw_distance = get_dtw_distance(original_gpx, edited_gpx)
     
     logger.info(
-        '%s,%d,%f,%d,%f,%f,%s',
-        os.path.basename(filename),
+        '%d,%f,%d,%f,%f,%s',
         original_count, 
         original_distance,
         new_count, 

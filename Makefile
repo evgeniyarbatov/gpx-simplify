@@ -35,11 +35,11 @@ docker:
 $(DEST_DIR)/%.gpx: $(SRC_DIR)/%.gpx force
 	source $(VENV_PATH)/bin/activate && \
 	cat $< | \
-	python3 scripts/simplify.py $@ | \
-	python3 scripts/match.py $@ | \
-	python3 scripts/simplify.py $@ | \
-	python3 scripts/ways.py $@ | \
-	python3 scripts/simplify.py $@ | \
+	python3 scripts/simplify.py | \
+	python3 scripts/match.py | \
+	python3 scripts/simplify.py | \
+	python3 scripts/ways.py | \
+	python3 scripts/simplify.py | \
 	python3 scripts/format-xml.py > $@; \
 
 force:
