@@ -6,6 +6,7 @@ import pandas as pd
 
 from utils import (
     log,
+    log_ways,
     get_gpx_df,
     create_gpx,
 )
@@ -79,6 +80,7 @@ def get_route(df):
         # Query API for the current row
         way_count = get_way_count(row['nodes'])
         if way_count > 1:
+            log_ways(row['nodes'], way_count)
             route.append((row['lat'], row['lon']))
             continue
 
@@ -90,6 +92,7 @@ def get_route(df):
             way_count = get_way_count([row['nodes'][0], inner_row['nodes'][1]])
             
             if way_count > 1:
+                log_ways([row['nodes'][0], inner_row['nodes'][1]], way_count)
                 route.append((row['lat'], row['lon']))
                 route.append((inner_row['lat'], inner_row['lon']))
                 

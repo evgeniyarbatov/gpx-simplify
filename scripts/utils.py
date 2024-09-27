@@ -16,12 +16,14 @@ LOG_DIR = 'log'
 os.makedirs(LOG_DIR, exist_ok=True)
 
 logging.basicConfig(
-    filename=f"{LOG_DIR}/simplify.log", 
     filemode='a',
     encoding='utf-8', 
     level=logging.INFO,
     format='%(message)s',
 )
+
+logger = logging.getLogger(__name__)
+logger.propagate = False
  
 def parse_gpx(filepath):
 	with open(filepath, 'r') as gpx_file:
@@ -87,7 +89,10 @@ def log(
     step,
 ):
     logger = logging.getLogger(__name__)
-    
+    logger_handler = logging.FileHandler(f"{LOG_DIR}/simplify.log") 
+    logger_handler.setLevel(logging.INFO) 
+    logger.addHandler(logger_handler)
+
     original_count, original_distance = get_stats(original_gpx)
     new_count, new_distance = get_stats(edited_gpx)
     dtw_distance = get_dtw_distance(original_gpx, edited_gpx)
@@ -101,6 +106,21 @@ def log(
         dtw_distance,
         step,
     )
+    
+def log_ways(
+    nodes,
+    way_count,
+):
+    logger = logging.getLogger(__name__)
+    logger_handler = logging.FileHandler(f"{LOG_DIR}/ways.log")
+    logger_handler.setLevel(logging.INFO) 
+    logger.addHandler(logger_handler)
+    
+    logger.info(
+        '%s,%d',
+        nodes,
+        way_count
+    )    
     
 def create_gpx(route):
     gpx = Element('gpx', {

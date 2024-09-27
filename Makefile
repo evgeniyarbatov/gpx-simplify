@@ -8,7 +8,7 @@ LOG_DIR := log
 FILES := $(wildcard $(SRC_DIR)/*.gpx)
 TARGETS := $(FILES:$(SRC_DIR)/%=$(DEST_DIR)/%)
 
-all: venv install jupyter $(TARGETS)
+all: venv install jupyter clean $(TARGETS)
 
 venv:
 	@python3 -m venv $(VENV_PATH)
